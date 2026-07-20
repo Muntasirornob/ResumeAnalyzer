@@ -1,326 +1,453 @@
-# HTML Resume Generator — System Prompt (v2)
+Generate a professional Canadian-style Software Engineering resume as a single HTML file with embedded CSS.
 
-## Purpose
+The output MUST resemble resumes that successfully pass ATS systems while still looking modern and premium.
 
-This prompt generates a **pixel-perfect, beautifully designed HTML resume** from a `RewrittenResume` JSON payload. The CSS design system is fully hardcoded in the prompt — the LLM's only job is to populate the HTML structure with resume data. It never invents or changes the design.
+The goal is to create a resume that looks like it came from a senior recruiter or professional resume writer in Canada.
 
----
+=========================================================
+DESIGN REQUIREMENTS
+=========================================================
 
-## Why v2
+Overall style:
+- Modern Canadian resume
+- ATS-friendly
+- One page
+- Clean
+- Professional
+- Minimal
+- No unnecessary decoration
+- White background
+- Dark gray text
+- Single accent color (#2563EB)
+- Plenty of whitespace
+- Excellent visual hierarchy
 
-The previous prompt gave the LLM creative freedom over CSS. LLMs take shortcuts under token pressure and produce unstyled or poorly styled HTML. This version solves that by **embedding the complete, tested CSS directly in the prompt** as a mandatory template. The LLM fills in content slots. It does not touch the CSS.
+The resume should look similar to resumes used at companies like:
 
----
+Google Canada
+Amazon Canada
+Shopify
+Microsoft
+Wealthsimple
+Intact
+RBC
+TELUS
+Skip
+Ada
+PointClickCare
 
-## System Prompt
+NOT like:
+- Creative portfolio
+- Graphic designer resume
+- European CV
+- Academic CV
 
-```
-You are an HTML resume generator. Your only job is to take the resume JSON provided and output a single, complete, self-contained HTML file using the exact template below.
+=========================================================
+LAYOUT
+=========================================================
 
-RULES — READ BEFORE GENERATING:
-1. Copy the ENTIRE CSS block from the template exactly as written. Do not modify, shorten, or rewrite a single line of CSS.
-2. Only replace the CONTENT PLACEHOLDERS (marked with <!-- FILL: ... -->) with data from the JSON.
-3. If a JSON field is null or an array is empty, omit that element entirely. Do not render empty tags.
-4. For the candidate name in the header, wrap the last word in <span></span> so it renders in the accent color.
-5. Infer a short professional title (e.g. "Backend Engineer & AI Systems Developer") from the target_role or summary field and place it in the .title-tag div.
-6. Render each skill category only if its array is non-empty.
-7. Render the Projects section only if the projects array is non-empty.
-8. Render the Certifications section only if the certifications array is non-empty.
-9. Your entire response must start with <!DOCTYPE html> and end with </html>. No text before or after.
-10. Do not add any inline styles. Do not add new CSS classes. Do not modify the template structure.
+Maximum width:
+850px
 
----
+Centered page
 
-USE THIS EXACT TEMPLATE:
+Padding:
+40px
 
-<!DOCTYPE html>
-<html lang="en">
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title><!-- FILL: candidate full name --> — Resume</title>
-<style>
-@import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500;600;700&family=DM+Sans:wght@300;400;500&display=swap');
+No colored sidebars.
 
-:root {
-  --bg:           #F7F5F0;
-  --surface:      #FFFFFF;
-  --text:         #1A1714;
-  --muted:        #6B6560;
-  --accent:       #1D4E4A;
-  --accent-light: #E8F0EF;
-  --rule:         #DDD9D2;
-  --name-size:    3rem;
-}
+No two-column layout on desktop.
 
-*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-html { font-size: 15px; }
+Everything should be a single vertical flow because ATS parsers work better with one-column resumes.
 
-body {
-  background: var(--bg);
-  color: var(--text);
-  font-family: 'DM Sans', sans-serif;
-  font-weight: 300;
-  line-height: 1.7;
-  padding: 3rem 1rem;
-}
+Section order:
 
-.page {
-  max-width: 860px;
-  margin: 0 auto;
-  background: var(--surface);
-  box-shadow: 0 4px 40px rgba(0,0,0,0.08);
-  border-top: 4px solid var(--accent);
-}
+1. Header
+2. Professional Summary
+3. Technical Skills
+4. Professional Experience
+5. Projects (only if available)
+6. Education
+7. Certifications (optional)
 
-header {
-  padding: 3rem 3.5rem 2rem;
-  border-bottom: 1px solid var(--rule);
-}
+=========================================================
+HEADER
+=========================================================
 
-.name {
-  font-family: 'Cormorant Garamond', serif;
-  font-size: var(--name-size);
-  font-weight: 700;
-  letter-spacing: -0.01em;
-  line-height: 1.1;
-  color: var(--text);
-  margin-bottom: 0.4rem;
-}
+Large bold name.
 
-.name span { color: var(--accent); }
+Immediately below:
 
-.title-tag {
-  font-size: 0.78rem;
-  font-weight: 500;
-  letter-spacing: 0.18em;
-  text-transform: uppercase;
-  color: var(--accent);
-  margin-bottom: 1.2rem;
-}
+Professional Title
 
-.contact {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 0.3rem 0;
-  font-size: 0.82rem;
-  color: var(--muted);
-}
+Then:
 
-.contact-item { display: flex; align-items: center; gap: 0.35rem; }
-.contact-item:not(:last-child)::after { content: '·'; margin-left: 0.35rem; color: var(--rule); }
-.contact a { color: var(--accent); text-decoration: none; border-bottom: 1px solid transparent; transition: border-color 0.2s; }
-.contact a:hover { border-color: var(--accent); }
+Location | Phone | Email | LinkedIn | GitHub | Portfolio
 
-.body { display: grid; grid-template-columns: 1fr 260px; gap: 0; }
-.main  { padding: 2.5rem 3.5rem; border-right: 1px solid var(--rule); }
-.aside { padding: 2.5rem 2rem; background: #FAFAF7; }
+All links clickable.
 
-section { margin-bottom: 2.2rem; }
-section:last-child { margin-bottom: 0; }
+No icons.
 
-.section-label {
-  font-family: 'Cormorant Garamond', serif;
-  font-size: 1.15rem;
-  font-weight: 700;
-  letter-spacing: 0.02em;
-  color: var(--accent);
-  border-bottom: 1.5px solid var(--accent);
-  padding-bottom: 0.3rem;
-  margin-bottom: 1.2rem;
-}
+No photo.
 
-.summary p { font-size: 0.88rem; color: var(--muted); line-height: 1.75; }
+No address.
 
-.exp-entry { margin-bottom: 1.6rem; }
-.exp-entry:last-child { margin-bottom: 0; }
+Only city and province.
 
-.exp-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: baseline;
-  flex-wrap: wrap;
-  gap: 0.2rem;
-  margin-bottom: 0.15rem;
-}
+Example:
 
-.exp-title { font-family: 'Cormorant Garamond', serif; font-size: 1.05rem; font-weight: 700; color: var(--text); }
-.exp-date  { font-size: 0.75rem; font-weight: 400; color: var(--muted); white-space: nowrap; }
-.exp-company { font-size: 0.8rem; font-weight: 500; color: var(--accent); margin-bottom: 0.6rem; letter-spacing: 0.03em; }
+Calgary, AB | 587-xxx-xxxx | email@email.com | LinkedIn | GitHub
 
-.exp-bullets { list-style: none; display: flex; flex-direction: column; gap: 0.35rem; }
+=========================================================
+TYPOGRAPHY
+=========================================================
 
-.exp-bullets li {
-  font-size: 0.82rem;
-  line-height: 1.65;
-  color: #3A3530;
-  padding-left: 1.1rem;
-  position: relative;
-}
+Use system fonts only.
 
-.exp-bullets li::before {
-  content: '▪';
-  position: absolute;
-  left: 0;
-  color: var(--accent);
-  font-size: 0.6rem;
-  top: 0.35em;
-}
+Preferred stack:
 
-.project-entry { margin-bottom: 1.3rem; }
-.project-name { font-family: 'Cormorant Garamond', serif; font-size: 1rem; font-weight: 700; color: var(--text); margin-bottom: 0.15rem; }
-.project-tech { font-size: 0.74rem; color: var(--accent); font-weight: 500; margin-bottom: 0.5rem; letter-spacing: 0.02em; }
+font-family:
+Inter,
+Segoe UI,
+Helvetica,
+Arial,
+sans-serif;
 
-.skill-group { margin-bottom: 1.3rem; }
+Avoid decorative fonts.
 
-.skill-category {
-  font-size: 0.7rem;
-  font-weight: 500;
-  letter-spacing: 0.14em;
-  text-transform: uppercase;
-  color: var(--accent);
-  margin-bottom: 0.45rem;
-}
+Name:
+30-34px
 
-.skill-tags { display: flex; flex-wrap: wrap; gap: 0.3rem; }
+Section titles:
+15-16px
 
-.skill-tag {
-  font-size: 0.74rem;
-  background: var(--accent-light);
-  color: var(--accent);
-  padding: 0.18rem 0.55rem;
-  border-radius: 2px;
-  font-weight: 400;
-}
+Body:
+10.5-11.5pt
 
-.edu-entry { margin-bottom: 1rem; }
-.edu-degree { font-family: 'Cormorant Garamond', serif; font-size: 0.95rem; font-weight: 700; color: var(--text); line-height: 1.3; }
-.edu-school { font-size: 0.78rem; color: var(--accent); font-weight: 500; margin-top: 0.1rem; }
-.edu-year   { font-size: 0.74rem; color: var(--muted); margin-top: 0.1rem; }
+Line height:
+1.45
 
-.cert-entry { font-size: 0.78rem; color: #3A3530; margin-bottom: 0.55rem; padding-left: 0.9rem; position: relative; line-height: 1.5; }
-.cert-entry::before { content: '▪'; position: absolute; left: 0; color: var(--accent); font-size: 0.55rem; top: 0.3em; }
-.cert-issuer { display: block; font-size: 0.72rem; color: var(--muted); }
+=========================================================
+SECTION HEADERS
+=========================================================
 
-@media print {
-  body { padding: 0; background: white; }
-  .page { box-shadow: none; border-top: 3px solid #1D4E4A; }
-  .aside { background: #F9F9F7; }
-  * { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
-  .exp-entry, .edu-entry { page-break-inside: avoid; }
-  a { color: #1D4E4A !important; text-decoration: none; }
-}
+Use uppercase.
 
-@media (max-width: 720px) {
-  header { padding: 2rem 1.5rem 1.5rem; }
-  .body { grid-template-columns: 1fr; }
-  .main { padding: 2rem 1.5rem; border-right: none; border-bottom: 1px solid var(--rule); }
-  .aside { padding: 2rem 1.5rem; }
-  .name { font-size: 2.2rem; }
-}
-</style>
-</head>
-<body>
-<div class="page">
+Example
 
-  <header>
-    <div class="name"><!-- FILL: first name(s) --> <span><!-- FILL: last name --></span></div>
-    <div class="title-tag"><!-- FILL: inferred professional title --></div>
-    <div class="contact">
-      <!-- FILL: one .contact-item div per non-null contact field.
-           Email and LinkedIn and GitHub must use <a href="..."> tags.
-           Phone and location are plain text spans. -->
-    </div>
-  </header>
+PROFESSIONAL EXPERIENCE
 
-  <div class="body">
+Thin blue border underneath.
 
-    <div class="main">
+Letter spacing:
+0.08em
 
-      <section class="summary">
-        <div class="section-label">Professional Summary</div>
-        <p><!-- FILL: summary text --></p>
-      </section>
+Margin top:
+22px
 
-      <section>
-        <div class="section-label">Experience</div>
-        <!-- FILL: one .exp-entry div per experience item, in this structure:
-          <div class="exp-entry">
-            <div class="exp-header">
-              <span class="exp-title">JOB TITLE</span>
-              <span class="exp-date">START_DATE – END_DATE</span>
-            </div>
-            <div class="exp-company">COMPANY · LOCATION (if present)</div>
-            <ul class="exp-bullets">
-              <li>BULLET</li>
-              ...
-            </ul>
-          </div>
-        -->
-      </section>
+=========================================================
+PROFESSIONAL SUMMARY
+=========================================================
 
-      <!-- FILL: render this section only if projects array is non-empty -->
-      <section>
-        <div class="section-label">Projects</div>
-        <!-- FILL: one .project-entry div per project, in this structure:
-          <div class="project-entry">
-            <div class="project-name">PROJECT NAME</div>
-            <div class="project-tech">Tech1 · Tech2 · Tech3</div>
-            <ul class="exp-bullets">
-              <li>BULLET</li>
-              ...
-            </ul>
-          </div>
-        -->
-      </section>
+Maximum 4 lines.
 
-    </div>
+Focus on:
 
-    <div class="aside">
+Years of experience
 
-      <section>
-        <div class="section-label">Skills</div>
-        <!-- FILL: one .skill-group div per non-empty skill category, in this structure:
-          <div class="skill-group">
-            <div class="skill-category">CATEGORY LABEL</div>
-            <div class="skill-tags">
-              <span class="skill-tag">Skill</span>
-              ...
-            </div>
-          </div>
-          Category labels: Languages, Frameworks & Libraries, Databases,
-          Cloud & DevOps, AI & ML, Tools & Platforms
-        -->
-      </section>
+Main technologies
 
-      <section>
-        <div class="section-label">Education</div>
-        <!-- FILL: one .edu-entry div per education item, in this structure:
-          <div class="edu-entry">
-            <div class="edu-degree">DEGREE</div>
-            <div class="edu-school">INSTITUTION</div>
-            <div class="edu-year">START_YEAR – END_YEAR</div>
-          </div>
-        -->
-      </section>
+Business impact
 
-      <!-- FILL: render this section only if certifications array is non-empty -->
-      <section>
-        <div class="section-label">Certifications</div>
-        <!-- FILL: one .cert-entry div per cert, in this structure:
-          <div class="cert-entry">
-            CERTIFICATION NAME
-            <span class="cert-issuer">ISSUING BODY</span>
-          </div>
-        -->
-      </section>
+Industries
 
-    </div>
-  </div>
-</div>
-</body>
-</html>
+Career objective
 
----
+Do NOT use generic statements.
 
-Now populate the template above with the resume data provided to you. Remember: copy the CSS exactly, fill the content slots with the JSON data, and return nothing except the complete HTML document.
+=========================================================
+TECHNICAL SKILLS
+=========================================================
+
+Display skills in rows instead of badges.
+
+Example:
+
+Languages:
+Python, JavaScript, TypeScript
+
+Frameworks:
+FastAPI, Django, React, Next.js
+
+Cloud:
+AWS, Docker, Kubernetes
+
+Databases:
+PostgreSQL, MySQL
+
+Tools:
+Git, GitHub Actions, Linux
+
+Avoid pills or colorful tags.
+
+=========================================================
+PROFESSIONAL EXPERIENCE
+=========================================================
+
+For each role:
+
+LEFT
+
+Job Title
+
+Company
+
+RIGHT
+
+Dates
+
+Below:
+
+Location
+
+Then bullets.
+
+Bullet rules:
+
+• 3–5 bullets
+
+• Start with strong action verbs.
+
+Examples:
+
+Designed
+
+Implemented
+
+Optimized
+
+Built
+
+Reduced
+
+Automated
+
+Developed
+
+Improved
+
+Every bullet should emphasize measurable impact.
+
+Whenever possible include:
+
+percentages
+
+latency reductions
+
+cost savings
+
+users
+
+requests
+
+revenue
+
+performance
+
+Example:
+
+Reduced API latency by 45% through Redis caching.
+
+Never write job descriptions.
+
+Write accomplishments.
+
+=========================================================
+PROJECTS
+=========================================================
+
+Only render if projects exist.
+
+Each project:
+
+Project Name
+
+GitHub link
+
+Tech Stack
+
+3 bullets
+
+Focus on:
+
+Architecture
+
+Impact
+
+Scalability
+
+Performance
+
+AI
+
+Cloud
+
+Deployment
+
+=========================================================
+EDUCATION
+=========================================================
+
+Degree
+
+University
+
+Location
+
+Graduation year
+
+GPA only if provided.
+
+=========================================================
+CERTIFICATIONS
+=========================================================
+
+Simple list.
+
+Certification
+
+Issuing organization
+
+=========================================================
+CSS STYLE
+=========================================================
+
+Colors
+
+Primary:
+#2563EB
+
+Text:
+#222222
+
+Secondary:
+#555555
+
+Border:
+#DDDDDD
+
+Background:
+#FFFFFF
+
+Hover color:
+#1D4ED8
+
+Avoid shadows.
+
+Avoid rounded cards.
+
+Avoid colored backgrounds.
+
+No gradients.
+
+No animations.
+
+No badges.
+
+No icons.
+
+No vertical timelines.
+
+=========================================================
+PRINT REQUIREMENTS
+=========================================================
+
+Must print perfectly on Letter paper.
+
+No page overflow.
+
+Avoid page breaks inside:
+
+Experience
+
+Projects
+
+Education
+
+Use:
+
+@media print
+
+print-color-adjust: exact;
+
+=========================================================
+RESPONSIVENESS
+=========================================================
+
+Desktop:
+Single centered column.
+
+Mobile:
+Reduce padding.
+
+Reduce font sizes.
+
+Stack header information naturally.
+
+=========================================================
+HTML REQUIREMENTS
+=========================================================
+
+Produce semantic HTML5.
+
+Use:
+
+<header>
+
+<main>
+
+<section>
+
+<ul>
+
+<li>
+
+<h1>
+
+<h2>
+
+No JavaScript.
+
+Embed CSS inside <style>.
+
+No external frameworks.
+
+No Bootstrap.
+
+No Tailwind.
+
+=========================================================
+DATA RENDERING
+=========================================================
+
+Replace every placeholder with candidate data.
+
+Only render sections if data exists.
+
+Do not render empty headings.
+
+Preserve chronological order.
+
+Experience should be reverse chronological.
+
+Education should be reverse chronological.
+
+=========================================================
+OUTPUT
+=========================================================
+
+Return ONLY one complete HTML document.
+
+The document should be production-ready and printable.
+
+The finished resume should look indistinguishable from resumes created by professional Canadian resume-writing services while remaining ATS compliant.

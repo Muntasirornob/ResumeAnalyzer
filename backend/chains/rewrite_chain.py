@@ -63,21 +63,21 @@ class RewrittenResume(BaseModel):
 def rewrite_resume_chain(resume, ats, skills, job_role, job_description, llm):
     system_prompt = get_rewrite_prompt()
     human_prompt = f"""
-Original Resume:
-{resume}
+                Original Resume:
+                {resume}
 
-ATS Analysis:
-{ats}
+                ATS Analysis:
+                {ats}
 
-Skills:
-{skills}
+                Skills:
+                {skills}
 
-Job Role Seeking:
-{job_role}
+                Job Role Seeking:
+                {job_role}
 
-Job Description:
-{job_description}
-"""
+                Job Description:
+                {job_description}
+                """
 
     structured_llm = llm.with_structured_output(RewrittenResume)
     messages = [

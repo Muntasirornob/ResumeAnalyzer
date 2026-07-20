@@ -10,4 +10,10 @@ fastapi
 uvicorn
 python-multipart
 aiohttp
-
+sqlalchemy
+databases
+python-jose[cryptography]
+passlib[bcrypt]
+PyJWT
+python-decouple
+playwright
