@@ -7,7 +7,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from config import settings
 from database import engine
 from models import Base
-from routers import auth, resume, user
+from routers import auth, interview, jobs, resume, user
 
 # Ensure database tables exist at startup
 Base.metadata.create_all(bind=engine)
@@ -59,6 +59,8 @@ def health_check() -> dict[str, str]:
 
 
 app.include_router(resume.router)
+app.include_router(jobs.router)
+app.include_router(interview.router)
 app.include_router(user.router)
 app.include_router(auth.router, prefix="/auth")
 

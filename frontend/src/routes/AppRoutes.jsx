@@ -3,6 +3,9 @@ import { Link, Navigate, Route, Routes } from 'react-router'
 import { AuthContext, AuthProvider } from '../contexts/AuthContext.jsx'
 import Home from '../pages/Home'
 import JobDescription from '../pages/JobDescription'
+import JobTrackerPage from '../pages/JobTrackerPage'
+import InterviewPage from '../pages/InterviewPage'
+import InterviewResultPage from '../pages/InterviewResultPage'
 import PreviewPage from '../pages/PreviewPage'
 import Register from '../components/Register'
 import Login from '../components/Login'
@@ -29,6 +32,18 @@ function NavBar() {
               <span className="mr-1 hidden max-w-[120px] truncate text-sm text-slate-500 sm:block">
                 {user.username}
               </span>
+              <Link
+                to="/jobs"
+                className="inline-flex items-center rounded-full px-4 py-1.5 text-sm font-medium text-slate-600 transition hover:text-slate-900"
+              >
+                Job Tracker
+              </Link>
+              <Link
+                to="/interview"
+                className="inline-flex items-center rounded-full px-4 py-1.5 text-sm font-medium text-slate-600 transition hover:text-slate-900"
+              >
+                Mock Interview
+              </Link>
               <Link
                 to="/profile"
                 className="inline-flex items-center rounded-full border border-slate-200 bg-white px-4 py-1.5 text-sm font-medium text-slate-700 transition hover:border-slate-300 hover:bg-slate-50"
@@ -68,6 +83,9 @@ function AppRoutes() {
             <Route path="/" element={<Home />} />
             <Route path="/job-description" element={<JobDescription />} />
             <Route path="/preview" element={<PreviewPage />} />
+            <Route path="/jobs" element={<JobTrackerPage />} />
+            <Route path="/interview" element={<InterviewPage />} />
+            <Route path="/interview/:interviewId/result" element={<InterviewResultPage />} />
             <Route path="/register" element={<Register />} />
             <Route path="/login" element={<Login />} />
             <Route path="/profile" element={<UserProfile />} />
