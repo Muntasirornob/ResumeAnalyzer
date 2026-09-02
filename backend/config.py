@@ -23,12 +23,13 @@ class Settings:
 
     # ── JWT ───────────────────────────────────────────────────────────────────
     # Generate a strong secret with: openssl rand -hex 32
-    SECRET_KEY: str = os.getenv(
-        "SECRET_KEY",
-        "09d25e094faa6ca2556c818166b7a9563b93f7099f6f0f4caa6cf63b88e8d3e7",
-    )
+    SECRET_KEY: str = os.getenv("SECRET_KEY", "")
     ALGORITHM: str = "HS256"
     ACCESS_TOKEN_EXPIRE_MINUTES: int = 30
+
+    def __init__(self):
+        if not self.SECRET_KEY:
+            raise RuntimeError("SECRET_KEY environment variable is required.")
 
     def get_cors_origins(self) -> list[str]:
         return [o.strip() for o in self.CORS_ORIGINS.split(",") if o.strip()]
